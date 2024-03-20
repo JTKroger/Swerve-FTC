@@ -7,7 +7,10 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 public class SwerveModule
 {
-    private static SwerveModule instance;
+    private static SwerveModule instance0;
+    private static SwerveModule instance1;
+    private static SwerveModule instance2;
+    private static SwerveModule instance3;
     private DcMotorEx motor;
     private CRServo servo;
     private DcMotorEx encoder;
@@ -22,6 +25,7 @@ public class SwerveModule
     private double diff1;
     private double diff2;
     private double diffFinal;
+    private double servoFrac;
 
     public SwerveModule(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
     {
@@ -38,6 +42,22 @@ public class SwerveModule
         else
         {
             isFront = false;
+        }
+        if(posOnDT == 0)
+        {
+            servoFrac = .954;
+        }
+        else if(posOnDT == 1)
+        {
+            servoFrac = .805;
+        }
+        else if(posOnDT == 2)
+        {
+            servoFrac = .955;
+        }
+        else
+        {
+            servoFrac = 1;
         }
     }
     public void drive(double powerX, double powerY)
@@ -57,7 +77,7 @@ public class SwerveModule
         setDesiredEncoderVal(xpos, ypos);
         editInRotation(zpos);
         calucateShortestPath();
-        turnModule();
+        turnModule(zpos);
     }
     private void getCurrentVal()
     {
@@ -163,6 +183,22 @@ public class SwerveModule
     }
     private void editInRotation(double zpos)
     {
+//        if(posOnDT == 0)
+//        {
+//            desEnValRot = .375;
+//        }
+//        else if(posOnDT == 1)
+//        {
+//            desEnValRot = .625;
+//        }
+//        else if(posOnDT == 2)
+//        {
+//            desEnValRot = .875;
+//        }
+//        else
+//        {
+//            desEnValRot = .125;
+//        }
         angle = zpos * .125;
         if(zpos == 0)
         {
@@ -265,24 +301,60 @@ public class SwerveModule
 
         }
     }
-    private void turnModule()
+    private void turnModule(double zpos)
     {
-        if((diffFinal) > .03)
+        if(!(diffFinal < .02 || diffFinal > -.02))
         {
-            servo.setPower(.954 * -1);
+            if((diffFinal) > .02)
+            {
+                servo.setPower(servoFrac * -1);
+            }
+            else if((diffFinal) < -.02)
+            {
+                servo.setPower(servoFrac * 1);
+            }
+            else
+                servo.setPower(0);
         }
-        else if((diffFinal) < -.03)
+        else if(zpos > 0)
         {
-            servo.setPower(.954 * 1);
+
         }
-        else
-            servo.setPower(0);
+        else if(zpos < 0)
+        {
+
+        }
     }
-    public static SwerveModule getInstance(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position){
-        if(instance == null){
-            instance = new SwerveModule(cMotor, cServo, cEncoder, position);
+    public static SwerveModule getBackLeftMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
+    {
+        if(instance0 == null){
+            instance0 = new SwerveModule(cMotor, cServo, cEncoder, position);
         }
 
-        return instance;
+        return instance0;
+    }
+    public static SwerveModule getFrontLeftMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
+    {
+        if(instance1 == null){
+            instance1 = new SwerveModule(cMotor, cServo, cEncoder, position);
+        }
+
+        return instance1;
+    }
+    public static SwerveModule getFrontRightMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
+    {
+        if(instance2 == null){
+            instance2 = new SwerveModule(cMotor, cServo, cEncoder, position);
+        }
+
+        return instance2;
+    }
+    public static SwerveModule getBackRightMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
+    {
+        if(instance3 == null){
+            instance3 = new SwerveModule(cMotor, cServo, cEncoder, position);
+        }
+
+        return instance3;
     }
 }
