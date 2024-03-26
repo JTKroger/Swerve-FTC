@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.SwerveUtil.SwerveModuleState;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 public class SwerveModule
@@ -35,6 +37,7 @@ public class SwerveModule
         posOnDT = position;
         desEnVal = 1;
         reverse = 1;
+        // uses the inputed position to determine where the current swerve module is on the drivetrain
         if(posOnDT == 1 || posOnDT == 2)
         {
             isFront = true;
@@ -62,6 +65,7 @@ public class SwerveModule
     }
     public void drive(double powerX, double powerY)
     {
+        // takes in the x and y value from the joystick and uses it to run the motor at either full speed or no speed
         if(powerX == 1 || powerX == -1 || powerY == 1 || powerY ==-1)
         {
             motor.setPower(-1 * reverse);
@@ -71,17 +75,30 @@ public class SwerveModule
             motor.setPower(0);
         }
     }
+    public SwerveModuleState funny(SwerveModuleState ha)
+    {
+        return ha;
+    }
+
+    public void setDesiredState(SwerveModuleState desiredState){
+        motor.setVelocity((desiredState.speedMetersPerSecond/ 0.0254) * 15, AngleUnit.RADIANS);
+        desEnValRot = desiredState.angle.getDegrees()/ 360;
+        calucateShortestPath();
+        turnModule();
+    }
+
     public void runTheCode(double xpos, double ypos, double zpos)
     {
+        // main method that calls all the other methods in the order they should be run
         getCurrentVal();
         setDesiredEncoderVal(xpos, ypos);
         editInRotation(zpos);
         calucateShortestPath();
-        turnModule(zpos);
+        turnModule();
     }
     private void getCurrentVal()
     {
-        // determines if the encoder value is positive or not, if not then it turns it positive
+        // determines the current encoder value and turns it to be out of one rotation, turning the encoder value positive if need be (0,1]
         if((((double)(encoder.getCurrentPosition()) % 20746) / 20746) > 0)
         {
             encoderVal = ((double)(encoder.getCurrentPosition()) % 20746) / 20746;
@@ -97,6 +114,7 @@ public class SwerveModule
     }
     private void setDesiredEncoderVal(double xpos, double ypos)
     {
+        // uses the x and y values of the joystick to convert a value (0,1] that represent the desired encoder value out of one revolution
         if(!((xpos < 1 && xpos > -1) && (ypos < 1 && ypos > -1)))
         {
             //Quadrant 1
@@ -183,39 +201,40 @@ public class SwerveModule
     }
     private void editInRotation(double zpos)
     {
-//        if(posOnDT == 0)
-//        {
-//            desEnValRot = .375;
-//        }
-//        else if(posOnDT == 1)
-//        {
-//            desEnValRot = .625;
-//        }
-//        else if(posOnDT == 2)
-//        {
-//            desEnValRot = .875;
-//        }
-//        else
-//        {
-//            desEnValRot = .125;
-//        }
-        angle = zpos * .125;
-        if(zpos == 0)
+        // this one still doesn't work
+        if(posOnDT == 0)
         {
-            desEnValRot = desEnVal;
+            desEnValRot = .375;
         }
-        else if(isFront)
+        else if(posOnDT == 1)
         {
-            desEnValRot = desEnVal + angle;
+            desEnValRot = .625;
         }
-        else if(!isFront)
+        else if(posOnDT == 2)
         {
-            desEnValRot = desEnVal - angle;
+            desEnValRot = .875;
         }
+        else
+        {
+            desEnValRot = .125;
+        }
+//        angle = zpos * .125;
+//        if(zpos == 0)
+//        {
+//            desEnValRot = desEnVal;
+//        }
+//        else if(isFront)
+//        {
+//            desEnValRot = desEnVal + angle;
+//        }
+//        else if(!isFront)
+//        {
+//            desEnValRot = desEnVal - angle;
+//        }
     }
     private void calucateShortestPath()
     {
-        // Finds the opposite angle in revolutions
+        // Finds the opposite angle across the robot in revolutions (0,1]
         if(desEnValRot > .5)
         {
             oppEnVal = desEnValRot - .5;
@@ -224,7 +243,7 @@ public class SwerveModule
         {
             oppEnVal = desEnVal + .5;
         }
-        // Calculates the difference
+        // Calculates the difference between the desired encoder and the current encoder value
         if(encoderVal >= .75 && desEnValRot <= .25)
         {
             diff1 = ((1-encoderVal) + (desEnValRot)) % 1;
@@ -257,6 +276,7 @@ public class SwerveModule
         {
             diff1 = -(encoderVal - desEnValRot) % 1;
         }
+        // calculate the difference between the found opposite encoder value and the current encoder value
         if(encoderVal >= .75 && oppEnVal <= .25)
         {
             diff2 = ((1-encoderVal) + (oppEnVal)) % 1;
@@ -289,6 +309,7 @@ public class SwerveModule
         {
             diff2 = -(encoderVal - oppEnVal) % 1;
         }
+        // compares the length of the 2 found difference values and finds the one that is shorter
         if(Math.abs(diff1) > Math.abs(diff2))
         {
             diffFinal = diff2;
@@ -301,30 +322,22 @@ public class SwerveModule
 
         }
     }
-    private void turnModule(double zpos)
+    private void turnModule()
     {
-        if(!(diffFinal < .02 || diffFinal > -.02))
+        // turns the module in the dirrection that will decrease the calculated difference value, stops turning once the difference value is small enough
+        if((diffFinal) > .02)
         {
-            if((diffFinal) > .02)
-            {
-                servo.setPower(servoFrac * -1);
-            }
-            else if((diffFinal) < -.02)
-            {
-                servo.setPower(servoFrac * 1);
-            }
-            else
-                servo.setPower(0);
+            servo.setPower(servoFrac * -1);
         }
-        else if(zpos > 0)
+        else if((diffFinal) < -.02)
         {
+            servo.setPower(servoFrac * 1);
+        }
+        else
+            servo.setPower(0);
 
-        }
-        else if(zpos < 0)
-        {
-
-        }
     }
+    // These 4 methods just create the objects for the swerve modules
     public static SwerveModule getBackLeftMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
     {
         if(instance0 == null){
@@ -356,5 +369,6 @@ public class SwerveModule
         }
 
         return instance3;
+
     }
 }

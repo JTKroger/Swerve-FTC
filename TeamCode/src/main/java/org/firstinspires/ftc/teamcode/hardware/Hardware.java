@@ -54,6 +54,7 @@ public class Hardware
         {
             motor.setPower(0);
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
     }

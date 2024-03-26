@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.SwerveUtil.SwerveModuleState;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Launcher;
@@ -29,9 +30,9 @@ public class Swerve extends OpMode {
     @Override
     public void loop()
     {
-            drivetrain.drive(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            drivetrain.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             //drivetrain.steer(gamepad1.left_stick_x);
-            drivetrain.servoControl(gamepad1.left_stick_x , gamepad1.left_stick_y, gamepad1.right_stick_x);
+//            drivetrain.servoControl(gamepad1.left_stick_x , gamepad1.left_stick_y, gamepad1.right_stick_x);
             launcher.changeLiftPosition(gamepad2.a);
             launcher.rotateLauncher(gamepad2.left_stick_x);
             launcher.pushBalls(gamepad2.left_trigger);
@@ -56,9 +57,21 @@ public class Swerve extends OpMode {
 //        telemetry.addData("BREncoderO::", drivetrain.brDiff);
 //        telemetry.addData("FREncoderO::", drivetrain.frDiff);
 //        telemetry.addData("Desired En::", drivetrain.desEnValFZ);
-        telemetry.addData("xpos::", gamepad1.left_stick_x);
-        telemetry.addData("ypos::", gamepad1.left_stick_y);
-        telemetry.addData("trigger", gamepad1.left_trigger);
+//        telemetry.addData("xpos::", gamepad1.left_stick_x);
+//        telemetry.addData("ypos::", gamepad1.left_stick_y);
+//        telemetry.addData("trigger", gamepad1.left_trigger);
+        telemetry.addData("SwerveStateZeroSpeed::", drivetrain.zero.getSpeed());
+        telemetry.addData("SwerveStateZeroCos::", drivetrain.zero.angle.getDegrees());
+        telemetry.addData("SwerveStateZeroSin::", drivetrain.zero.getAngleSin());
+        telemetry.addData("SwerveStateOneSpeed::", drivetrain.one.getSpeed());
+        telemetry.addData("SwerveStateOneCos::", drivetrain.one.getAngleCos());
+        telemetry.addData("SwerveStateOneSin::", drivetrain.one.getAngleSin());
+        telemetry.addData("SwerveStateTwoSpeed::", drivetrain.two.getSpeed());
+        telemetry.addData("SwerveStateTwoCos::", drivetrain.two.getAngleCos());
+        telemetry.addData("SwerveStateTwoSin::", drivetrain.two.getAngleSin());
+        telemetry.addData("SwerveStateThreeSpeed::", drivetrain.three.getSpeed());
+        telemetry.addData("SwerveStateThreeCos::", drivetrain.three.getAngleCos());
+        telemetry.addData("SwerveStateThreeSin::", drivetrain.three.getAngleSin());
         telemetry.update();
     }
 }
