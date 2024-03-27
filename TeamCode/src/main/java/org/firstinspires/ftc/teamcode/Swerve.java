@@ -60,18 +60,19 @@ public class Swerve extends OpMode {
 //        telemetry.addData("xpos::", gamepad1.left_stick_x);
 //        telemetry.addData("ypos::", gamepad1.left_stick_y);
 //        telemetry.addData("trigger", gamepad1.left_trigger);
-        telemetry.addData("SwerveStateZeroSpeed::", drivetrain.zero.getSpeed());
-        telemetry.addData("SwerveStateZeroCos::", drivetrain.zero.angle.getDegrees());
-        telemetry.addData("SwerveStateZeroSin::", drivetrain.zero.getAngleSin());
-        telemetry.addData("SwerveStateOneSpeed::", drivetrain.one.getSpeed());
-        telemetry.addData("SwerveStateOneCos::", drivetrain.one.getAngleCos());
-        telemetry.addData("SwerveStateOneSin::", drivetrain.one.getAngleSin());
-        telemetry.addData("SwerveStateTwoSpeed::", drivetrain.two.getSpeed());
-        telemetry.addData("SwerveStateTwoCos::", drivetrain.two.getAngleCos());
-        telemetry.addData("SwerveStateTwoSin::", drivetrain.two.getAngleSin());
-        telemetry.addData("SwerveStateThreeSpeed::", drivetrain.three.getSpeed());
-        telemetry.addData("SwerveStateThreeCos::", drivetrain.three.getAngleCos());
-        telemetry.addData("SwerveStateThreeSin::", drivetrain.three.getAngleSin());
+        telemetry.addData("SwerveStateZeroSpeed::", drivetrain.swerveModuleStates[0].getSpeed());
+        telemetry.addData("SwerveStateZeroAngle::", drivetrain.swerveModuleStates[0].angle.getDegrees());
+        telemetry.addData("SwerveStateOneSpeed::", drivetrain.swerveModuleStates[1].getSpeed());
+        telemetry.addData("SwerveStateOneAngle::", drivetrain.swerveModuleStates[1].angle.getDegrees());
+        telemetry.addData("SwerveStateTwoSpeed::", drivetrain.swerveModuleStates[2].getSpeed());
+        telemetry.addData("SwerveStateTwoAngle::", drivetrain.swerveModuleStates[2].angle.getDegrees());
+        telemetry.addData("SwerveStateThreeSpeed::", drivetrain.swerveModuleStates[3].getSpeed());
+        telemetry.addData("SwerveStateThreeAngle::", drivetrain.swerveModuleStates[3].angle.getDegrees());
+        telemetry.addData("Back Left::", drivetrain.backLeftMod.diffFinal);
+        telemetry.addData("Front Left::", drivetrain.frontLeftMod.diffFinal);
+        telemetry.addData("Back Right::", drivetrain.backRightMod.diffFinal);
+        telemetry.addData("Front Right::", drivetrain.frontRightMod.diffFinal);
+        telemetry.addData("Angle::", drivetrain.getYawDegrees());
         telemetry.update();
     }
 }

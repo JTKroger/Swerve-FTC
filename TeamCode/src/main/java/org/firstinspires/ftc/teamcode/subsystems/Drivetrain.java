@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.SwerveUtil.Rotation2d;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 import org.firstinspires.ftc.teamcode.SwerveUtil.DriveConstants;
 import org.firstinspires.ftc.teamcode.SwerveUtil.ChassisSpeeds;
@@ -12,19 +18,24 @@ public class Drivetrain {
     private Hardware hardware;
 
     private static Drivetrain instance;
-    private SwerveModule backLeftMod;
-    private SwerveModule frontLeftMod;
-    private SwerveModule backRightMod;
-    private SwerveModule frontRightMod;
+    public SwerveModule backLeftMod;
+    public SwerveModule frontLeftMod;
+    public SwerveModule backRightMod;
+    public SwerveModule frontRightMod;
     private double m_currentRotation;
-    public SwerveModuleState zero;
-    public SwerveModuleState one;
-    public SwerveModuleState two;
-    public SwerveModuleState three;
+
+    private Orientation angles;
+
+    public SwerveModuleState[] swerveModuleStates;
+//    public SwerveModuleState zero;
+//    public SwerveModuleState one;
+//    public SwerveModuleState two;
+//    public SwerveModuleState three;
 
     public Drivetrain(Hardware hardware)
     {
         this.hardware = hardware;
+        angles =   angles = hardware.gyro.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         setModules();
     }
     private void setModules()
@@ -55,19 +66,28 @@ public class Drivetrain {
         double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
         double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-        SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-        zero = backLeftMod.funny(swerveModuleStates[0]);
-        one = frontLeftMod.funny(swerveModuleStates[1]);
-        two = frontRightMod.funny(swerveModuleStates[2]);
-        three = backRightMod.funny(swerveModuleStates[3]);
+        swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered,
+                rotDelivered, new Rotation2d(getYawDegrees())));
+        frontLeftMod.setDesiredState(swerveModuleStates[0]);
+        frontRightMod.setDesiredState(swerveModuleStates[1]);
+        backLeftMod.setDesiredState(swerveModuleStates[2]);
+        backRightMod.setDesiredState(swerveModuleStates[3]);
 
     }
-    public void servoControl(double xpos, double ypos, double zpos)
-    {
-        backLeftMod.runTheCode(xpos, ypos, zpos);
-        frontLeftMod.runTheCode(xpos, ypos, zpos);
-        frontRightMod.runTheCode(xpos, ypos, zpos);
-        backRightMod.runTheCode(xpos, ypos, zpos);
+//    public void servoControl(double xpos, double ypos, double zpos)
+//    {
+//        backLeftMod.runTheCode(xpos, ypos, zpos);
+//        frontLeftMod.runTheCode(xpos, ypos, zpos);
+//        frontRightMod.runTheCode(xpos, ypos, zpos);
+//        backRightMod.runTheCode(xpos, ypos, zpos);
+//    }
+
+    public double getYawDegrees(){
+        return -hardware.gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    public double getYawRadians(){
+        return -hardware.gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
     public static Drivetrain getInstance(Hardware hardware){
         if(instance == null){

@@ -21,4 +21,9 @@ public class Translation2d
     {
         return m_y;
     }
+
+    public Translation2d rotateBy(Rotation2d other) {
+        return new Translation2d(
+                m_x * other.getCos() - m_y * other.getSin(), m_x * other.getSin() + m_y * other.getCos());
+    }
 }

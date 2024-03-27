@@ -8,6 +8,13 @@ public class SimpleMatrix
     public SimpleMatrix( int numRows, int numCols )
     {
         matrix = new double[numRows][numCols];
+        for(int r = 0; r < matrix.length ; r++)
+        {
+            for(int c = 0; c < matrix[r].length ; c++)
+            {
+                matrix[r][c] = 0;
+            }
+        }
     }
     public SimpleMatrix(double[][] other)
     {
@@ -16,7 +23,7 @@ public class SimpleMatrix
         {
             for(int c = 0; c < other[r].length; c++)
             {
-                matrix[r][c] = test[r][c];
+                matrix[r][c] = other[r][c];
             }
         }
     }
@@ -50,35 +57,43 @@ public class SimpleMatrix
             }
         }
     }
-    public void setColumn( int row, int startColumn, double value1, double value2, double value3 )
+    public void setColumn( int column, int startRow, double value1, double value2, double value3 )
     {
-        for(int c = startColumn; c < matrix[row].length; c++)
+        for(int r = startRow; r < matrix.length; r++)
         {
-            if(c == 0)
+            if(r == 0)
             {
-                matrix[row][c] = value1;
+                matrix[r][column] = value1;
             }
-            else if(c == 1)
+            else if(r == 1)
             {
-                matrix[row][c] = value2;
+                matrix[r][column] = value2;
             }
             else
             {
-                matrix[row][c] = value3;
+                matrix[r][column] = value3;
             }
         }
     }
     public SimpleMatrix mult(SimpleMatrix other)
     {
         test = new double[getRow()][other.getColumn()];
+        for(int r = 0; r < test.length ; r++)
+        {
+            for(int c = 0; c < test[r].length ; c++)
+            {
+                test[r][c] = 0;
+            }
+        }
         for (int i = 0; i < getRow(); i++)
         {
             for (int j = 0; j < other.getColumn(); j++)
             {
-                for (int k = 0; k < other.getRow(); k++)
+                for (int k = 0; k < getColumn(); k++)
                     test[i][j] += matrix[i][k] * other.matrix[k][j];
             }
         }
-        return new SimpleMatrix(test);
+        SimpleMatrix cool = new SimpleMatrix(test);
+        return cool;
     }
 }

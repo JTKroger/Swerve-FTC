@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 public class Hardware
 {
     // Drive Motors
@@ -13,6 +19,8 @@ public class Hardware
     public DcMotorEx backLeft;
     public DcMotorEx frontRight;
     public DcMotorEx backRight;
+
+    public IMU gyro;
     private DcMotorEx[] driveMotors;
 
     // Drive Servos
@@ -71,6 +79,14 @@ public class Hardware
     }
     private void initEncoders(HardwareMap hardwareMap)
     {
+
+        gyro = hardwareMap.get(IMU.class, "imu");
+        Orientation hubRotation = xyzOrientation(0, 0, 0);
+
+        RevHubOrientationOnRobot orientation = new RevHubOrientationOnRobot(hubRotation);
+
+        gyro.initialize(new IMU.Parameters(orientation));
+
         frontLeftEn = hardwareMap.get(DcMotorEx.class, "frontLeftEn");
         backLeftEn = hardwareMap.get(DcMotorEx.class, "backLeftEn");
         frontRightEn = hardwareMap.get(DcMotorEx.class, "frontRightEn");

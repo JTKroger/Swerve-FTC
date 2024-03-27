@@ -26,7 +26,7 @@ public class SwerveModule
     private double angle;
     private double diff1;
     private double diff2;
-    private double diffFinal;
+    public double diffFinal;
     private double servoFrac;
 
     public SwerveModule(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
@@ -81,21 +81,59 @@ public class SwerveModule
     }
 
     public void setDesiredState(SwerveModuleState desiredState){
-        motor.setVelocity((desiredState.speedMetersPerSecond/ 0.0254) * 15, AngleUnit.RADIANS);
-        desEnValRot = desiredState.angle.getDegrees()/ 360;
+        motor.setVelocity(reverse * (desiredState.speedMetersPerSecond/ 0.0254) * 15, AngleUnit.RADIANS);
+        desEnVal = desiredState.angle.getDegrees()/ 360;
+        // Quadrant 1
+
+        if(desEnVal < 0 && desEnVal > -.25)
+        {
+            desEnValRot = desEnVal + .25;
+        }
+        // Quadrant 2
+        else if(desEnVal < -.25 && desEnVal > -.5)
+        {
+            desEnValRot = desEnVal + 1.25;
+        }
+        // Quadrant 3
+        else if(desEnVal > 0  && desEnVal < .25)
+        {
+            desEnValRot = desEnVal + .25;
+        }
+        // Quadrant 4
+        else if(desEnVal > .25 && desEnVal < .5)
+        {
+            desEnValRot = desEnVal + .25;
+        }
+        else if(desEnVal == 0)
+        {
+            desEnValRot = .25;
+        }
+        else if(desEnVal == -.25)
+        {
+            desEnValRot = 1;
+        }
+        else if(desEnVal == .25)
+        {
+            desEnValRot = .5;
+        }
+        else if(desEnVal == .5)
+        {
+            desEnValRot = .75;
+        }
+        getCurrentVal();
         calucateShortestPath();
         turnModule();
     }
 
-    public void runTheCode(double xpos, double ypos, double zpos)
-    {
-        // main method that calls all the other methods in the order they should be run
-        getCurrentVal();
-        setDesiredEncoderVal(xpos, ypos);
-        editInRotation(zpos);
-        calucateShortestPath();
-        turnModule();
-    }
+//    public void runTheCode(double xpos, double ypos, double zpos)
+//    {
+//        // main method that calls all the other methods in the order they should be run
+//        getCurrentVal();
+//        setDesiredEncoderVal(xpos, ypos);
+//        editInRotation(zpos);
+//        calucateShortestPath();
+//        turnModule();
+//    }
     private void getCurrentVal()
     {
         // determines the current encoder value and turns it to be out of one rotation, turning the encoder value positive if need be (0,1]

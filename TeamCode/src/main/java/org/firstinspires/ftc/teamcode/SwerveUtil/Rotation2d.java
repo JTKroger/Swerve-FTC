@@ -75,4 +75,15 @@ public class Rotation2d
         return m_sin;
     }
 
+
+    /**
+     * Takes the inverse of the current rotation. This is simply the negative of the current angular
+     * value.
+     *
+     * @return The inverse of the current rotation.
+     */
+    public Rotation2d unaryMinus() {
+        return new Rotation2d(-m_value);
+    }
+
 }
