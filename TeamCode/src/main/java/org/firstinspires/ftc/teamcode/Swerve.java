@@ -68,11 +68,21 @@ public class Swerve extends OpMode {
         telemetry.addData("SwerveStateTwoAngle::", drivetrain.swerveModuleStates[2].angle.getDegrees());
         telemetry.addData("SwerveStateThreeSpeed::", drivetrain.swerveModuleStates[3].getSpeed());
         telemetry.addData("SwerveStateThreeAngle::", drivetrain.swerveModuleStates[3].angle.getDegrees());
-        telemetry.addData("Back Left::", drivetrain.backLeftMod.diffFinal);
-        telemetry.addData("Front Left::", drivetrain.frontLeftMod.diffFinal);
-        telemetry.addData("Back Right::", drivetrain.backRightMod.diffFinal);
-        telemetry.addData("Front Right::", drivetrain.frontRightMod.diffFinal);
+        telemetry.addData("BL encoder val", drivetrain.backLeftMod.encoderVal);
+        telemetry.addData("FL encoder val", drivetrain.frontLeftMod.encoderVal);
+        telemetry.addData("BR encoder val", drivetrain.backRightMod.encoderVal);
+        telemetry.addData("FR encoder val", drivetrain.frontRightMod.encoderVal);
+//        telemetry.addData("Back Left::", drivetrain.backLeftMod.diffFinal);
+//        telemetry.addData("Front Left::", drivetrain.frontLeftMod.diffFinal);
+//        telemetry.addData("Back Right::", drivetrain.backRightMod.diffFinal);
+//        telemetry.addData("Front Right::", drivetrain.frontRightMod.diffFinal);
         telemetry.addData("Angle::", drivetrain.getYawDegrees());
+        telemetry.addData("FL Velo", drivetrain.getVelocities()[0]);
+        telemetry.addData("FR Velo", drivetrain.getVelocities()[1]);
+        telemetry.addData("Bl Velo", drivetrain.getVelocities()[2]);
+        telemetry.addData("BR Velo", drivetrain.getVelocities()[3]);
+
+
         telemetry.update();
     }
 }

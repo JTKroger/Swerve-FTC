@@ -66,7 +66,7 @@ public class Drivetrain {
         double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
         double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-        swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered,
+        swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromRobotRelativeSpeeds(xSpeedDelivered, ySpeedDelivered,
                 rotDelivered, new Rotation2d(getYawDegrees())));
         frontLeftMod.setDesiredState(swerveModuleStates[0]);
         frontRightMod.setDesiredState(swerveModuleStates[1]);
@@ -84,6 +84,11 @@ public class Drivetrain {
 
     public double getYawDegrees(){
         return -hardware.gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    public double[] getVelocities(){
+        return new double[]{frontLeftMod.getVelocity(), frontRightMod.getVelocity(),
+                backLeftMod.getVelocity(), backRightMod.getVelocity()};
     }
 
     public double getYawRadians(){

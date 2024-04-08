@@ -19,14 +19,14 @@ public class SwerveModule
     private boolean isFront;
     private int posOnDT;
     private double reverse;
-    private double encoderVal;
+    public double encoderVal;
     private double desEnVal;
     private double desEnValRot;
     private double oppEnVal;
     private double angle;
     private double diff1;
     private double diff2;
-    public double diffFinal;
+    private double diffFinal;
     private double servoFrac;
 
     public SwerveModule(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
@@ -374,6 +374,10 @@ public class SwerveModule
         else
             servo.setPower(0);
 
+    }
+
+    public double getVelocity(){
+        return motor.getVelocity();
     }
     // These 4 methods just create the objects for the swerve modules
     public static SwerveModule getBackLeftMod(DcMotorEx cMotor, CRServo cServo, DcMotorEx cEncoder, int position)
